@@ -23,6 +23,12 @@ public class Application {
 
     @Enumerated(EnumType.STRING)
     private Status status;
-    public enum Status { APPLIED, SHORTLISTED, PENDING, REJECTED }
+    public enum Status {
+        APPLIED,        // Candidate submitted the application
+        SHORTLISTED,    // Recruiter has shortlisted
+        INTERVIEW,      // Interview scheduled or completed
+        REJECTED,       // Candidate not selected
+        HIRED           // Candidate For The Job
+    }
 
 }

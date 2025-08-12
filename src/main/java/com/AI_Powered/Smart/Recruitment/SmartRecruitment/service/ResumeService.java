@@ -30,7 +30,7 @@ public class ResumeService {
     private final FileStorageService fileService;
 
     public CandidateProfile uploadResume(MultipartFile file, User user) throws IOException, TikaException {
-        CandidateProfile cp = repo.findByUser(user)
+        CandidateProfile cp = repo.findByUserId(user.getId())
                 .orElseGet(() -> CandidateProfile.builder().user(user).build());
 
         String path = fileService.store(file);

@@ -23,6 +23,7 @@ public class AuthController {
     @PostMapping("/register")
     @Operation(summary = "Register new user")
     public JwtResponse register(@Valid @RequestBody RegisterRequest r) {
+        System.out.println("Incoming Request"+r);
         return service.register(r);
     }
 

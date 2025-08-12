@@ -17,6 +17,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -37,14 +38,25 @@ public class AnalyticsService {
         );
     }
 
-    public List<SkillGapDto> skillGap(Long candidateId) {
-        CandidateProfile cp = cpRepo.findById(candidateId).orElseThrow();
-        Set<String> candidateSkills = Set.of(cp.getSkills().split(","));
+    public List<SkillGapDto> skillGap(Long userId) {
+        CandidateProfile cp = cpRepo.findByUserId(userId)
+                .orElseThrow(() -> new NotFoundException("Candidate profile not found for userId: " + userId));
+
+
+        Set<String> candidateSkills = (cp.getSkills() == null || cp.getSkills().isBlank())
+                ? Set.of()
+                : Arrays.stream(cp.getSkills().split(","))
+                .map(String::trim)
+                .filter(s -> !s.isBlank())
+                .collect(Collectors.toSet());
+
         return jobRepo.findAll().stream()
                 .flatMap(j -> Arrays.stream(j.getRequiredSkills().split(",")))
+                .map(String::trim)
+                .filter(s -> !s.isBlank())
                 .filter(s -> !candidateSkills.contains(s))
                 .distinct()
-                .map(s -> new SkillGapDto(s))
+                .map(SkillGapDto::new)
                 .toList();
     }
 
